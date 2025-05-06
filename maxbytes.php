@@ -1,4 +1,5 @@
 <?php
+//sets some javascript variables needed for Uploads 
 $num1 = return_bytes(ini_get("post_max_size"));
 $num2 = return_bytes(ini_get("upload_max_filesize"));
 $min = ($num1 <=> $num2) < 0 ? $num1 : $num2;

@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']!=1)
         die('Add a login mechanism or remove that line for public access');
 
 // there is all there was for configuration
-$requestedPath = $_GET['path']=="/" ? $editorBase : $_GET['path'];
+$requestedPath = isset($_GET['path']) && $_GET['path']=="/" ? $editorBase : $_GET['path'];
 $safeBaseDirAbs = $_SERVER["DOCUMENT_ROOT"];
 
 // Determine the actual directory to scan

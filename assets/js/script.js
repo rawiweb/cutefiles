@@ -246,9 +246,9 @@ if (['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'].includes(ext)) {
       
       
      // CKEditor integration 
-    // if (getUrlParam('ckeditorfuncnum')) {
-    //    file.addEventListener('click', e => { e.preventDefault(); returnFileUrl(f.path); });
-    //  }
+     if (getUrlParam('ckeditorfuncnum')) {
+        file.addEventListener('click', e => { e.preventDefault(); returnFileUrl(f.path); });
+      }
     });
 
 dataList.appendChild(folderList);
@@ -285,8 +285,6 @@ const dropTargets = document.querySelectorAll('.folders.drop-target');
 }//render
 
 const addDraggableItems = (items) =>{ items.forEach(item => {
-  
-  
     item.addEventListener('dragstart', function(e) {
       const itemPath = this.dataset.itemPath;
       const selectedElements = dataList.querySelectorAll('.selected');
@@ -349,7 +347,7 @@ target.addEventListener('drop', function(e) {
           statsEl.textContent = `Moved ${itemPath} to ${targetFolderPath}: ${xhr.responseText}`;
           // Optionally update UI after each move or after all moves
           if (itemsToMove.indexOf(itemPath) === itemsToMove.length - 1) {
-            new WtF(currentPath+' '+ targetFolderPath);
+         //   new WtF(currentPath+' '+ targetFolderPath);
             window.location.hash =encodeURIComponent(targetFolderPath); // Refresh after all moves
           }
         } else {
@@ -449,6 +447,7 @@ selectionDiv.style.height = `${Math.round(height)}px`;
     }
   });
 });
+
 document.addEventListener('mouseup', () => {
   if (isSelecting && selectionDiv) {
     isSelecting = false;
@@ -496,6 +495,7 @@ function triggerFileListReload() {
     //console.warn('fileList element not found.');
   }
 }
+
 if (dataList) {
   dataList.addEventListener('reloadFileList', () => {
     //console.log('Reload file list event received.');
@@ -504,6 +504,7 @@ if (dataList) {
 }
 
 window.triggerFileListReload = triggerFileListReload;
+
 goto(window.location.hash);
 
 });//DOM
@@ -679,7 +680,7 @@ const toolBox = (elmId) => {
   tbox.id="toolbox";
   document.getElementById(elmId).appendChild(tbox);
   
-}
+};
 
   const deleteButton = (container) =>{
    if (!document.getElementById('deleteButton')) {

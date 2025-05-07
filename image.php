@@ -27,15 +27,7 @@ if($image_type!="" && !is_null($image_type )){
   	$nx=(int) $maxsize * $a_xy['rat'];
   }
 
-// if ($image_type=="image/gif" || $image_type=="image/x-png" || $image_type=="image/png" || $image_type=="image/aviv"){
-//	$colorTransparent = imagecolortransparent($img);
-//	$nimg = imagecreate($nx, $ny);
-//	imagefill($nimg, 0, 0, $colorTransparent);
-//	imagepalettecopy($nimg, $img);
-//	imagecolortransparent($nimg, $colorTransparent);
-//}
-//else 
-    $nimg = ImageCreateTrueColor($nx,$ny);
+  $nimg = ImageCreateTrueColor($nx,$ny);
   imagecopyresized($nimg,$img,0, 0, 0, 0, $nx, $ny, $a_xy['x'], $a_xy['y']);
  // $line_color = ImageColorAllocate ($nimg, 0, 0, 0);
  // imagerectangle ( $nimg, 0, 0, $nx-1, $ny-1, $line_color );

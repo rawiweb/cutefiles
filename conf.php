@@ -1,6 +1,10 @@
 <?php
 $editorBase = "/files"; //set the relative Doc_Root files Directory
 
+session_start();
+if (!isset($_SESSION['admin']) || $_SESSION['admin']!=1) 
+        die('Add a login mechanism or remove that line for public access');
+
 // there is all there was for configuration
 $requestedPath = $_GET['path']=="/" ? $editorBase : $_GET['path'];
 $safeBaseDirAbs = $_SERVER["DOCUMENT_ROOT"];

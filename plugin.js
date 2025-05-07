@@ -1,9 +1,9 @@
 /* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Add these lines to CKEditor 4 conf.js
+     config.filebrowserImageBrowseUrl = '/cedit4/plugins/cutefiles/';
+    config.filebrowserVideoBrowseUrl = '/cedit4/plugins/cutefiles/';
+    config.filebrowserAudioBrowseUrl = '/cedit4/plugins/cutefiles/';
+    config.filebrowserBrowseUrl = '/cedit4/plugins/cutefiles/';
 
-CKEDITOR.replace( 'textarea_name',{
-    filebrowserBrowseUrl: "/javascript/your-kfm-copy/"
-  });
- */
-//(function(){CKEDITOR.plugins.add('cutefiles',{filebrowserBrowseUrl: "plugins/cutefiles/"})})
+*/
+(function(){CKEDITOR.plugins.add('cutefiles',{filebrowserBrowseUrl: "plugins/cutefiles/"})})

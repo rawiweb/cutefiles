@@ -1,0 +1,123 @@
+
+--- a/class.upload
++++ b/upload.class2
+@@ -28,6 +28,7 @@
+ namespace Verot\Upload;
+ 
+ if (!defined('IMG_WEBP')) define('IMG_WEBP', 32);
++if (!defined('IMG_AVIF')) define('IMG_AVIF', 32);
+ 
+ 
+@@ -1979,6 +1980,7 @@
+             'application/x-zip-compressed',
+             'application/zip',
+             'audio/*',
++            'video/*',
+             'image/*',
+             'multipart/x-gzip',
+             'multipart/x-zip',
+@@ -2005,6 +2007,7 @@
+             'png' => 'image/png',
+             'bmp' => 'image/bmp',
+             'flif' => 'image/flif',
++            'avif' => 'image/avif',
+             'flv' => 'video/x-flv',
+             'js' => 'application/x-javascript',
+             'json' => 'application/json',
+@@ -2033,6 +2036,9 @@
+             'mpe' => 'video/mpeg',
+             'mp3' => 'audio/mpeg3',
+             'mp4' => 'video/mp4',
++            'ogv' => 'video/ogv',
++            'webm' => 'video/webm',
++            'ogg' => 'audio/ogg',
+             'wav' => 'audio/wav',
+             'aiff' => 'audio/aiff',
+             'aif' => 'audio/aiff',
+@@ -2238,6 +2244,10 @@
+                 $this->image_supported['image/webp'] = 'webp';
+                 $this->image_supported['image/x-webp'] = 'webp';
+             }
++            if (imagetypes() & IMG_AVIF) {
++                $this->image_supported['image/avif'] = 'avif';
++                $this->image_supported['image/x-avif'] = 'avif';
++            }
+             if (imagetypes() & IMG_WBMP) {
+                 $this->image_supported['image/bmp'] = 'bmp';
+                 $this->image_supported['image/x-ms-bmp'] = 'bmp';
+@@ -2259,7 +2269,9 @@
+                                  (in_array('webp', $this->image_supported) ? 'webp' : '') . ' ' .
+                                  (in_array('jpg', $this->image_supported) ? 'jpg' : '') . ' ' .
+                                  (in_array('gif', $this->image_supported) ? 'gif' : '') . ' ' .
+-                                 (in_array('bmp', $this->image_supported) ? 'bmp' : ''));
++                                 (in_array('avif', $this->image_supported) ? 'avif' : '') . ' ' .
++                                 (in_array('bmp', $this->image_supported) ? 'bmp' : '')
++                                );
+             $this->log .= '-&nbsp;class version           : ' . $this->version . '<br />';
+             $this->log .= '-&nbsp;operating system        : ' . PHP_OS . '<br />';
+             $this->log .= '-&nbsp;PHP version             : ' . PHP_VERSION . '<br />';
+@@ -3594,6 +3606,20 @@
+                                 }
+                             }
+                             break;
++                        case 'avif':
++                            if (!$this->function_enabled('imagecreatefromavif')) {
++                                $this->processed = false;
++                                $this->error = $this->translate('no_create_support', array('AVIF'));
++                            } else {
++                                $image_src = @imagecreatefromavif($this->file_src_pathname);
++                                if (!$image_src) {
++                                    $this->processed = false;
++                                    $this->error = $this->translate('create_error', array('AVIF'));
++                                } else {
++                                    $this->log .= '- source image is AVIF<br />';
++                                }
++                            }
++                            break;
+                         case 'gif':
+                             if (!$this->function_enabled('imagecreatefromgif')) {
+                                 $this->processed = false;
+@@ -4404,6 +4430,18 @@
+                                     $watermark_checked = true;
+                                 }
+                             }
++                        }else if ($watermark_type == IMAGETYPE_AVIF) {
++                            if (!$this->function_enabled('imagecreatefromavif')) {
++                                $this->error = $this->translate('watermark_no_create_support', array('AVIF'));
++                            } else {
++                                $filter = @imagecreatefromavif($this->image_watermark);
++                                if (!$filter) {
++                                    $this->error = $this->translate('watermark_create_error', array('AVIF'));
++                                } else {
++                                    $this->log .= '&nbsp;&nbsp;&nbsp;&nbsp;watermark source image is AVIF<br />';
++                                    $watermark_checked = true;
++                                }
++                            }
+                         } else if ($watermark_type == IMAGETYPE_BMP) {
+                             if (!method_exists($this, 'imagecreatefrombmp')) {
+                                 $this->error = $this->translate('watermark_no_create_support', array('BMP'));
+@@ -5032,6 +5070,22 @@
+                                 $this->log .= '&nbsp;&nbsp;&nbsp;&nbsp;GIF image created<br />';
+                             }
+                             break;
++                        case 'avif':
++                            if (!$return_mode) {
++                                $result = @imageavif($image_dst, $this->file_dst_pathname);
++                            } else {
++                                ob_start();
++                                $result = @imageavif($image_dst);
++                                $return_content = ob_get_contents();
++                                ob_end_clean();
++                            }
++                            if (!$result) {
++                                $this->processed = false;
++                                $this->error = $this->translate('file_create', array('AVIF'));
++                            } else {
++                                $this->log .= '&nbsp;&nbsp;&nbsp;&nbsp;AVIF image created<br />';
++                            }
++                            break;
+\ No newline at end of file
+                         case 'bmp':
+                             if (!$return_mode) {
+                                 $result = $this->imagebmp($image_dst, $this->file_dst_pathname);
+

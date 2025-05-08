@@ -1,7 +1,14 @@
-Cutefiles is a HTML filebrowser written with use of HTML, css, Php, and Vanilla Javascript.
+# Cutefiles HTML filebrowser with CKEditor 4 integration and can stand alone 
+is a HTML filebrowser written with use of HTML, css, Php, and Vanilla Javascript.
+
+![Screenshot From 2025-05-07 12-25-47](https://github.com/user-attachments/assets/fb0a364e-d6a3-414a-92b6-bd3291544722)
+
 
 It can be used to Upload Files in batches, delete files and folders as well as create folders.
-It has drag and drop support to move items from one place to another.
+It has multiselect drag and drop support to move items from one place to another.
+
+Supports almost all image formats webp and avif included.
+HTML5 Video and Audio tags will be applied as well if valid sources are found.
 
 It comes with a basic slideshow to view images and it has basic image manipulation capabilities such as
 rotation of images and cropping of images. More to be added.

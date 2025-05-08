@@ -49,9 +49,11 @@ button svg{width:15px;height:15px}
 #uimg {
   position: absolute;
   top: 0;
-  margin-left: 0px;
+  margin: 0px;
   max-width: 100%
- 
+}
+#uimg.loader {
+  margin: 10% 0 0 50%;
 }
 
 #toolbox {

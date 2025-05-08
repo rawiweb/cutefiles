@@ -1889,6 +1889,11 @@ class Upload {
             'cgi',
             'asp',
             'js',
+            'mjs',
+            'jsx',
+            'ts',
+            'cjs',
+            'mjs',
             'sh',
             'bat',
             'phar',
@@ -1996,6 +2001,7 @@ class Upload {
             'text/x-comma-separated-values',
             'application/csv',
             'application/x-csv',
+             'font/woff2',
         );
 
         $this->mime_types = array(
@@ -2034,7 +2040,9 @@ class Upload {
             'mpeg' => 'video/mpeg',
             'mpg' => 'video/mpeg',
             'mpe' => 'video/mpeg',
-            'mp3' => 'audio/mpeg3',
+            'mp3' => 'audio/mpeg',
+            'mid' => 'audio/midi',
+            'midi' => 'audio/midi',
             'mp4' => 'video/mp4',
             'ogv' => 'video/ogv',
             'webm' => 'video/webm',
@@ -2088,6 +2096,8 @@ class Upload {
             'onetmp' => 'application/onenote',
             'onepkg' => 'application/onenote',
             'csv' => 'text/csv',
+            'ttf' => 'font/sfnt',
+            'woff2'=>'font/woff2'
         );
 
 

@@ -2,11 +2,13 @@
 $editorBase = "/files"; //set the relative Doc_Root files Directory
 
 session_start();
-if (!isset($_SESSION['admin']) || $_SESSION['admin']!=1) 
-        die('Add a login mechanism or remove that line for public access');
-
+if (!isset($_SESSION['admin']) || $_SESSION['admin']!=1){ 
+    header('HTTP/1.0 401 Unauthorized');
+    die('Add a login mechanism or remove that line for public access');
+}
 // there is all there was for configuration
-$requestedPath = isset($_GET['path']) && $_GET['path']=="/" ? $editorBase : $_GET['path'];
+$path = isset($_GET['path']) && $_GET['path']!="" ? $_GET['path'] : $editorBase;
+$requestedPath = $path =="/" ? $editorBase : $path;
 $safeBaseDirAbs = $_SERVER["DOCUMENT_ROOT"];
 
 // Determine the actual directory to scan
@@ -36,3 +38,9 @@ if(!$regularRequest){
     
 }
 require __DIR__."/assets/upload.class2.php";
+
+$sec_check = new \Verot\Upload\Upload($pathToScan);
+$unsave = $sec_check->dangerous;
+$forbidden = $sec_check->forbidden;
+$unsave = array_merge($unsave,$forbidden);
+$sec_check = null;

@@ -6,7 +6,6 @@ if (isset($_GET["get"])){
 
  switch($_GET["get"]){
      case "rotate":
-     
      $myimage = $filename;
      if(file_exists($myimage)){
      
@@ -24,12 +23,11 @@ if (isset($_GET["get"])){
      echo $myimage;
      } else echo $myimage;
    break;
- case "crop":
+     case "crop":
      
      $trbl = explode(",",$_GET["coords"]);
      $myimage = $filename;
      if(file_exists($myimage)){
-
      $handle = new \Verot\Upload\Upload($myimage);
      $handle->file_dst_path =$parentDirAbs."/";
      $handle->file_overwrite = false;
@@ -44,10 +42,17 @@ if (isset($_GET["get"])){
       echo "<p class=\"err\">$handle->error.$handle->log</p><img id=\"uimg\">";
      }else echo "<p class=\"err\">file not found</p><img src=\"$myimage\" id=\"uimg\">";
     break;
-     case "create": if(!is_dir($filename)) echo mkdir ($filename); break;
+     case "create": if(!is_dir($filename)){
+         echo mkdir ($filename); break;
+     }
      case "rename":$newname = isset($_GET["newname"]) && $_GET["newname"]!="" ? $_GET["newname"] : "";
         $newnameabs = $parentDirAbs."/$newname";
-        echo rename($filename,$newnameabs); break;
+        $a_ext = explode(".",$newnameabs);
+        $ext = array_pop($a_ext);
+        $continue = !in_array($ext, $unsave);
+         if($continue) echo rename($filename,$newnameabs);
+         else echo "forbidden extension ".$ext;
+        break;
      case "delete": if(is_file($filename)) echo unlink($filename) == true ? 1 : 0;
          if(is_dir($filename)){
             $cont = delDirRec($filename);
@@ -89,6 +94,7 @@ for($i = 0 ;$i<=count($pic["name"])-1;$i++){
     $handle = new \Verot\Upload\Upload($pic['tmp_name'][$i]);
  //   $handle->allowed = "image/*";
   if ($handle->uploaded) {
+      //error_log("MIME TYPE = ".$handle->file_src_mime);
       $a_pic = explode(".",$pic['name'][$i]);
       array_pop($a_pic);
       $pname=implode(".",$a_pic);

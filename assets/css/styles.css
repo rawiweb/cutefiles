@@ -30,7 +30,35 @@ a:focus,a:active,a:hover{border:none}
 .folders.selected,.current{
   background-color: #e0f7fa;
   border: 1px solid #26a69a;
-}.load {
+ }
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 20px;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  background: #a0d4e4;
+  box-shadow: 0 0 0 0 rgba(66, 139, 202, 0.1);
+  animation: l2 1.5s infinite linear;
+  position: relative;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 rgba(66, 139, 202, 0.1);
+  animation: inherit;
+  animation-delay: -0.5s;
+}
+.loader:after {
+  animation-delay: -1s;
+}
+@keyframes l2 {
+    100% {box-shadow: 0 0 0 40px #0000}
+}
+ 
+.load {
   animation: loading 3s linear infinite;
 }
 @keyframes loading {

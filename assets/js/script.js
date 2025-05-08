@@ -147,10 +147,11 @@ const addClickAbles = (elm, path) => {
       fetch(`file.php?get=rename&newname=${decodeURIComponent(fname)}&path=${uripath}`)
         .then(r => r.text())
         .then(res => {
+          msg = res;
           if (Number(res) === 1) {
             fileScanner(currentPath);
           } else {
-            alert(`failed to rename ${path}`);
+            alert(`failed to rename ${path} ${msg}`);
           }
         })
         .catch(console.error);
@@ -167,6 +168,7 @@ const addClickAbles = (elm, path) => {
     edits.title = 'edit';edits.innerHTML = 'E';
     edits.addEventListener('click' , e =>{e.preventDefault();
     e.stopPropagation();
+    elm.classList.add('selected');
     document.querySelector(".filemanager").classList.add('no-drag');
     const container = document.createElement('div');
     const uimg = document.createElement('img');
@@ -176,13 +178,14 @@ const addClickAbles = (elm, path) => {
     container.dataset.pic = `${path}`;
     dataList.insertBefore(container,document.querySelector(".folder-list"));
     container.appendChild(uimg);
+    uimg.classList.add('loader');
     const myCropTool = new CropTool('crop-container','toolbox','uimg');
     deleteButton('crop-container');
     rotateButton();
     container.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
   })
   elm.querySelector(".tool").appendChild(edits);  
-
+    
   }}
 
   
@@ -229,7 +232,7 @@ const folderList = document.createElement('ul');
       let iconClass = "";
 
 if (['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'].includes(ext)) {
-  iconClass = `<img src="image.php?path=${encodeURIComponent(f.path)}">`;
+  iconClass = `<img class="loader" src="image.php?path=${encodeURIComponent(f.path)}">`;
 } else if (['webm', 'mp4', 'ogv'].includes(ext)) {
   iconClass = `<video controls> <source src="${f.path}" type="video/${ext}"></video>`;
 } else if (['wav', 'mp3', 'ogg'].includes(ext)) {
@@ -243,8 +246,7 @@ if (['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'].includes(ext)) {
             file.innerHTML = `<div class="tool"></div><a href="${f.path}" title="${f.path} Size: ${fileSize}" class="file">${iconClass}</a><span class="name" title=""> ${name} </span>`;
       fileList.appendChild(file);
       addClickAbles(file, f.path,true);
-      
-      
+
      // CKEditor integration 
      if (getUrlParam('ckeditorfuncnum')) {
         file.addEventListener('click', e => { e.preventDefault(); returnFileUrl(f.path); });
@@ -253,6 +255,10 @@ if (['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'].includes(ext)) {
 
 dataList.appendChild(folderList);
 dataList.appendChild(fileList);
+const images =fileList.querySelectorAll('img');
+images.forEach(im=>{
+    im.addEventListener('load',(img)=>{img.originalTarget.classList.remove('loader')})
+});
 
 const url = filemanager.classList.contains('searching') ?
   `<span>Search results for: ${breadcrumbsUrls[0].split('/')[1]}</span>` :
@@ -594,7 +600,8 @@ class SlideshowOverlay {
     });
     this.overlay.appendChild(this.keyButton);
     this.showBackgroundImage(this.currentIndex);
-  }
+    this.image.addEventListener('load',(e)=>{this.image.classList.remove('loader')}) 
+ }
 
   updateIndicator() {
     const imageName = this.imagePaths[this.currentIndex].split('/').pop();
@@ -603,6 +610,7 @@ class SlideshowOverlay {
 
   showBackgroundImage(index) {
     if (index >= 0 && index < this.imagePaths.length) {
+      this.image.classList.add("loader");
       this.currentIndex = index;
       this.image.src = "";
       const baseurl = "slideshowimage.php?path="+this.imagePaths[index]+"&h=";
@@ -821,7 +829,7 @@ const toolBox = (elmId) => {
   }
   
     setupEventListeners() {
-    
+    this.uimg.addEventListener('load',(e)=>{this.uimg.classList.remove('loader')}) 
     this.showButton.addEventListener('click', () => this.showOverlay());
     this.hideButton.addEventListener('click', () => this.hideOverlay());
     this.cancelButton.addEventListener('click', () => this.cancelCrop());
@@ -865,6 +873,7 @@ const toolBox = (elmId) => {
 
     hideOverlay() {
       this.hideButton.style.display = 'none';
+      
     //  this.cancelButton.style.display = 'none'; 
       if(document.getElementById('deleteButton')) document.getElementById('deleteButton').disabled = false;
       if(document.getElementById('rotateButton')) document.getElementById('rotateButton').disabled = false;
@@ -884,7 +893,7 @@ const toolBox = (elmId) => {
         this.overlay.style.width = imageRect.width + 'px';
         this.overlay.style.height = imageRect.height + 'px';
         this.overlay.style.display = 'none';
-
+this.uimg.classList.add('loader');
         fetch(go)
           .then((response) => response.text())
           .then((html) => {
@@ -895,6 +904,7 @@ const toolBox = (elmId) => {
             
             if(document.getElementById('resurl')) document.getElementById('resurl').value = document.getElementById('uimg').getAttribute('src');
             document.getElementById('tooltoggle').classList.remove('load');
+            this.uimg.classList.remove('loader');
           //  if(window.triggerFileListReload()) window.triggerFileListReload();
           });
      }

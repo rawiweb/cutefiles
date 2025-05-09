@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const debug = true;
   const createButton = document.getElementById('create');
   const slideShowButton = document.getElementById('slideShow');
   const fileManagerRoot = '/files';
@@ -62,20 +63,19 @@ if (createButton) {
 if(slideShowButton){    
     slideShowButton.addEventListener('click', (e) => {
   e.preventDefault();
+  createSlideShow();
+});
+};
+
+const createSlideShow =(index = 0)=>{
   imageFiles = dataList.querySelectorAll('.file-list a');
   let iData = [];
-  let index=0,c = 0;
   imageFiles.forEach(image =>{
     if(image.firstChild.tagName === 'IMG')
      iData.push(image.parentNode.dataset.itemPath);
-    if( e.explicitOriginalTarget.tagName !== "svg" && e.rangeParent.attributes.href &&  e.rangeParent.attributes.href.value == image.parentNode.dataset.itemPath) {
-                index = c;
-    }
-        c++;
-  });
+     });
    const slideshow = new SlideshowOverlay(iData,index);
   slideshow.triggerSlideshow();
-});
 }
 
 const goto = (hash) => {
@@ -193,8 +193,8 @@ const addClickAbles = (elm, path) => {
 }
 
 const render = (data) => {
-    dataList.innerHTML = ''; // Clear file list only once
-    breadcrumbs.innerHTML = ''; // Clear breadcrumbs only once
+    dataList.innerHTML = ''; 
+    breadcrumbs.innerHTML = ''; 
     const scannedFolders = [];
     const scannedFiles = [];
     data.forEach(item => {
@@ -224,6 +224,8 @@ const folderList = document.createElement('ul');
     folderList.appendChild(folder);
     addClickAbles(folder, f.path);
 });
+
+let index = 0;
     scannedFiles.forEach(f => {
       const parts = f.name.split('.');
       const ext = parts.length > 1 ? parts.pop().toLowerCase() : '';
@@ -232,7 +234,7 @@ const folderList = document.createElement('ul');
       let iconClass = "";
 
 if (['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'].includes(ext)) {
-  iconClass = `<img class="loader" src="image.php?path=${encodeURIComponent(f.path)}">`;
+  iconClass = `<img class="loader" src="image.php?path=${encodeURIComponent(f.path)}" data-idx="${index++}">`;
 } else if (['webm', 'mp4', 'ogv'].includes(ext)) {
   iconClass = `<video controls> <source src="${f.path}" type="video/${ext}"></video>`;
 } else if (['wav', 'mp3', 'ogg'].includes(ext)) {
@@ -255,10 +257,7 @@ if (['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'].includes(ext)) {
 
 dataList.appendChild(folderList);
 dataList.appendChild(fileList);
-const images =fileList.querySelectorAll('img');
-images.forEach(im=>{
-    im.addEventListener('load',(img)=>{img.originalTarget.classList.remove('loader')})
-});
+
 
 const url = filemanager.classList.contains('searching') ?
   `<span>Search results for: ${breadcrumbsUrls[0].split('/')[1]}</span>` :
@@ -283,15 +282,13 @@ breadcrumbs.querySelectorAll('.breadcrumb-item.folders').forEach(item => {
     window.location.hash = encodeURIComponent(path);
   });
 });
-const draggableItems = document.querySelectorAll('.files, .folders');
-      addDraggableItems(draggableItems);
-const dropTargets = document.querySelectorAll('.folders.drop-target');
-      addDropTargets(dropTargets);
+
 
 }//render
 
-const addDraggableItems = (items) =>{ items.forEach(item => {
+const addDraggableItems = (items) =>{if(debug) console.log('make dragable'); items.forEach(item => {
     item.addEventListener('dragstart', function(e) {
+        if(debug) console.log('Drag start. Selected elements:', dataList.querySelectorAll('.selected').length); 
       const itemPath = this.dataset.itemPath;
       const selectedElements = dataList.querySelectorAll('.selected');
       const selectedPaths = Array.from(selectedElements).map(selectedItem => selectedItem.dataset.itemPath);
@@ -303,27 +300,41 @@ const addDraggableItems = (items) =>{ items.forEach(item => {
         e.dataTransfer.setData('text/plain', itemPath);
         this.classList.add('dragging'); // Only add to the dragged item for single selection
       }
+      e.dataTransfer.effectAllowed = 'move';
+       this.addEventListener('blur', () =>{if(debug) console.log('Dragged item lost focus'), { once: true }});
+       const onMouseMove = (moveEvent) => {
+   if(debug)  console.log('Mouse move during drag:', moveEvent.clientX, moveEvent.clientY);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  this.addEventListener('dragend', () => {
+    document.removeEventListener('mousemove', onMouseMove);
+   if(debug)  console.log('Drag ended.');
+  }, { once: true });
     });
-    item.addEventListener('dragend', function() {
+    item.addEventListener('dragend', function(e) {
+         if(debug) console.log('Drag end. Selected elements:',e); 
       filemanager.querySelectorAll('.drop-target').forEach(el => el.classList.remove('active'));
       dataList.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
     });
-  
-})};
+});};
 
-const addDropTargets = (folders) => {folders.forEach(target => {
+const addDropTargets = (folders) => {if(debug) console.log('make Dropable'); folders.forEach(target => {
         
   target.addEventListener('dragover', function(e) {
     e.preventDefault(); // Allow the drop
+     if(debug) console.log('D-over'); 
     this.classList.add('drag-over'); // Visual feedback
   });
   target.addEventListener('dragenter', function(e) {
+       if(debug) console.log('D-enter'); 
     this.classList.add('drag-over'); // Visual feedback
   });
   target.addEventListener('dragleave', function(e) {
+       if(debug) console.log('D-leave'); 
     this.classList.remove('drag-over'); // Remove visual feedback
   });
 target.addEventListener('drop', function(e) {
+     if(debug) console.log('D-drop'); 
   e.preventDefault();
   this.classList.remove('drag-over');
   const targetFolderPath = this.dataset.targetPath;
@@ -378,7 +389,7 @@ filemanager.addEventListener('click', e => {
     } else{
         if(e.target.tagName==="IMG"){
             e.preventDefault();
-            slideShowButton.click()
+            createSlideShow(e.target.dataset.idx)
 }
 
     }
@@ -391,11 +402,12 @@ let isSelecting = false;
 
 let selectionDiv = document.querySelector('.selection-rect');
 document.addEventListener('mousedown', (e) => {
+    if(debug) console.log('FM click');
   const isDraggable = e.target.closest('.files, .folders');
  
   if (!isDraggable && !(e.target.closest('.tool'))) {
     // If the mousedown is NOT on a draggable item or a tool, start selection
-    e.preventDefault(); // Prevent default text selection when drawing rectangle
+   // e.preventDefault(); // Prevent default text selection when drawing rectangle
     isSelecting = true;
   
   selectionStartX = e.clientX + window.scrollX -filemanager.offsetLeft;
@@ -420,6 +432,7 @@ document.addEventListener('mousedown', (e) => {
 });
 
 document.addEventListener('mousemove', (e) => {
+    if(debug) console.log('doc mousemove');
   if (!isSelecting || !selectionDiv || document.querySelector(".filemanager").classList.contains('no-drag')) return;
   
   const currentX = e.clientX + window.scrollX -filemanager.offsetLeft; 
@@ -429,7 +442,7 @@ document.addEventListener('mousemove', (e) => {
   const top = Math.min(selectionStartY, currentY);
   const width = Math.abs(selectionStartX - currentX);
   const height = Math.abs(selectionStartY - currentY);
-//statsEl.textContent = `X:${Math.round(currentX)} |Y:${Math.round(currentY)} |L:${left} |T:${top} |W:${width} |H:${height}  | `;
+statsEl.textContent = `X:${Math.round(currentX)} |Y:${Math.round(currentY)} |L:${left} |T:${top} |W:${width} |H:${height}  | `;
 
 selectionDiv.style.left = `${Math.round(left)}px`;
 selectionDiv.style.top = `${Math.round(top)}px`;
@@ -455,6 +468,7 @@ selectionDiv.style.height = `${Math.round(height)}px`;
 });
 
 document.addEventListener('mouseup', () => {
+    if(debug) console.log('DOC Mouseup');
   if (isSelecting && selectionDiv) {
     isSelecting = false;
     selectionDiv.remove();
@@ -488,7 +502,17 @@ const fileScanner = (path) =>{
       response = [data];
       breadcrumbsUrls = generateBreadcrumbs(currentPath);
       render(data.items || []);
- 
+     const draggableItems = document.querySelectorAll('.files, .folders');
+     if(debug) console.log(draggableItems);
+      addDraggableItems(draggableItems);
+     const dropTargets = document.querySelectorAll('.folders.drop-target');
+       if(debug) console.log(dropTargets);
+        addDropTargets(dropTargets);
+      
+      const images =dataList.querySelectorAll('img');
+images.forEach(im=>{
+    im.addEventListener('load',(img)=>{img.target.classList.remove('loader')})
+});
     })
     .catch(console.error);
 };
@@ -496,7 +520,7 @@ const fileScanner = (path) =>{
 function triggerFileListReload() {
   if (dataList) {
     dataList.dispatchEvent(reloadFileListEvent);
-    //console.log('Reload file list event dispatched.');
+    //if(debug) console.log('Reload file list event dispatched.');
   } else {
     //console.warn('fileList element not found.');
   }
@@ -504,7 +528,7 @@ function triggerFileListReload() {
 
 if (dataList) {
   dataList.addEventListener('reloadFileList', () => {
-    //console.log('Reload file list event received.');
+    //if(debug) console.log('Reload file list event received.');
     fileScanner(currentPath);
   });
 }
@@ -518,7 +542,7 @@ goto(window.location.hash);
 class SlideshowOverlay {
   constructor(imagePaths,index=0) {
     this.imagePaths = imagePaths;
-    this.currentIndex = index;
+    this.currentIndex = parseInt(index);
     this.overlay = null;
     this.container = null;
     this.image = null;

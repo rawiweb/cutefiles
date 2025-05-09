@@ -240,16 +240,15 @@ video,audio{max-width:250px}
   transform: scale(1.05); /* Slightly grow on active state */
   animation: shake 0.3s ease-in-out infinite alternate; /* Apply shake animation */
 }
-
-footer{text-align:right;margin:1em  }
 @keyframes shake {
   0% { transform: translateX(0) rotate(0deg) scale(1.05); }
   50% { transform: translateX(-1px) rotate(-1deg) scale(1.05); }
   100% { transform: translateX(1px) rotate(1deg) scale(1.05); }
 }
 .drag-over{background-color:transparent;}
-.dragging{cursor: grab!important;border:1px dotted;position:relative;visibility:hidden}
+.dragging{cursor: grab!important;border:1px dotted;}
 
+footer{text-align:right;margin:1em  }
 #upload {
  position:absolute;
  top:0;

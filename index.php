@@ -46,9 +46,11 @@ require __DIR__."/conf.php";
         <div class="stats"></div>
 	<div class="dataContainer"></div>
 	</div>
-       <script src="assets/js/ckedit.js"></script> <!--CKEditor 4 plugin-->
-       <script src="assets/js/script.js?v=1"></script>
-       <script src="assets/js/upload.js"></script>
+       <script src="./assets/js/ckedit.js"></script> <!--CKEditor 4 plugin-->
+       <script type="module" src="./assets/js/script.js?v=1"></script>
+       <script src="./assets/js/upload.js"></script>
+       <script src="./assets/js/slideshow.js" type="module" defer></script>
+  <script src="./assets/js/croptool.js" type="module" defer></script>
 <script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
 <script>
 (function(document, window, index) {

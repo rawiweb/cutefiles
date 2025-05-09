@@ -31,17 +31,14 @@ if($image_type!="" && !is_null($image_type )){
   imagecopyresized($nimg,$img,0, 0, 0, 0, $nx, $ny, $a_xy['x'], $a_xy['y']);
  // $line_color = ImageColorAllocate ($nimg, 0, 0, 0);
  // imagerectangle ( $nimg, 0, 0, $nx-1, $ny-1, $line_color );
-  header ("Content-type: $image_type");
+  
 
-  switch ($image_type){
-   case "image/gif": {imagegif($nimg);break;}
-//   case "image/jpeg": {imagejpeg($nimg);break;}
-//   case "image/pjpeg": {imagejpeg($nimg);break;}
-//   case "image/png": {imagepng($nimg);break;}
-//   case "image/x-png": {imagepng($nimg);break;}
-   case "image/webp": {imagewebp($nimg);break;}
-   case "image/avif": {imageavif($nimg);break;}
-   default:imageavif($nimg);
-  }
+  if(function_exists("imageavif")){
+    header ("Content-type: image/avif"); 
+    imageavif($nimg);
+  }else
+   {header("Content-type: image/webp");imagewebp($nimg);}
+  
+ 
 
 }?>

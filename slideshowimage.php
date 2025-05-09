@@ -45,14 +45,12 @@ if($image_type!="" && !is_null($image_type )){
  // imagerectangle ( $nimg, 0, 0, $nx-1, $ny-1, $line_color );
   header ("Content-type: $image_type");
 
-  switch ($image_type){
-   case "image/gif": {imagegif($nimg);break;}
-//   case "image/jpeg": {imagejpeg($nimg);break;}
-//   case "image/pjpeg": {imagejpeg($nimg);break;}
-//   case "image/png": {imagepng($nimg);break;}
-//   case "image/x-png": {imagepng($nimg);break;}
-   case "image/webp": {imagewebp($nimg);break;}
-   default:imageavif($nimg);
-  }
+ if(function_exists("imageavif")){
+    header ("Content-type: image/avif"); 
+    imagefilter($nimg, IMG_FILTER_SMOOTH,IMG_FILTER_CONTRAST);
+    imageavif($nimg);
+  }else
+   {header("Content-type: image/webp");imagewebp($nimg);}
+  
 
 }?>
